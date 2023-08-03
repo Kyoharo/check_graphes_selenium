@@ -53,8 +53,8 @@ def send_email(body_message):
     smtp_host = 'mail.egyptpost.org'
     smtp_port = 25  # Update the port if necessary
     sender_email = 'W_Abdelrahman.Ataa@EgyptPost.Org'
-    recipient_emails = ['W_Abdelrahman.Ataa@EgyptPost.Org', 'w_mohamed_essam@egyptpost.org']
-    subject = 'Websites status'
+    recipient_emails = ['W_Abdelrahman.Ataa@EgyptPost.Org', 'w_mohamed_essam@egyptpost.org','w_Badry_Nasr@egyptpost.org']
+    subject = 'Graphes status'
 
     # Create the email message
     message = EmailMessage()

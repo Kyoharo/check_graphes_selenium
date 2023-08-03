@@ -22,7 +22,7 @@ class InstaBot:
         #webdriver
         try:
             url = "https://presentation.egyptpost.local"
-            serv_obj = service= Service('geckodriver')
+            serv_obj = service= Service(r'\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\geckodriver.exe')
             ops=webdriver.FirefoxOptions()
             #ops.headless=True        
             self.driver = webdriver.Firefox(service=serv_obj,options=ops)
@@ -35,7 +35,7 @@ class InstaBot:
             print("Error", f"There is problem with geckodriver.exe or problem with internet \n  geckodriver هنالك مشكلة بالانترنت او بملف ")
             #try to use chromedriver instead
             try:
-                serv_obj = service= Service('chromedriver')
+                serv_obj = service= Service(r'\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\chromedriver.exe')
                 ops=webdriver.ChromeOptions()
                 #ops.headless=True        
                 self.driver = webdriver.Chrome(service=serv_obj,options=ops)
@@ -239,23 +239,23 @@ for key, value in Thread_Pool.items():
         issues[key] = Thread_Pool_status
 
 print("----------------------------------------------")
-#Heap_Memory
-for key, value in Memory.items():
-    Heap_Memory_status = mybot.Memory(value,"//label[@for='501978509']")
-    key_Heap = f"{key}_Heap"
-    print(f"{key_Heap}: {Heap_Memory_status}")
-    if float(Heap_Memory_status) > 80.00:
-        issues[key_Heap] = Heap_Memory_status
+# #Heap_Memory
+# for key, value in Memory.items():
+#     Heap_Memory_status = mybot.Memory(value,"//label[@for='501978509']")
+#     key_Heap = f"{key}_Heap"
+#     print(f"{key_Heap}: {Heap_Memory_status}")
+#     if float(Heap_Memory_status) > 80.00:
+#         issues[key_Heap] = Heap_Memory_status
 
 
-print("----------------------------------------------")
-#Memory_Used
-for key, value in Memory.items():
-    Memory_Used_status = mybot.Memory(value,"//label[@for='501978508']")
-    key_used = f"{key}_Used"
-    print(f"{key_used}: {Memory_Used_status}")
-    if float(Memory_Used_status) > 90.00:
-        issues[key_used] = Memory_Used_status
+# print("----------------------------------------------")
+# #Memory_Used
+# for key, value in Memory.items():
+#     Memory_Used_status = mybot.Memory(value,"//label[@for='501978508']")
+#     key_used = f"{key}_Used"
+#     print(f"{key_used}: {Memory_Used_status}")
+#     if float(Memory_Used_status) > 90.00:
+#         issues[key_used] = Memory_Used_status
     
 mybot.Quit()
 
@@ -267,23 +267,33 @@ print(issues)
 
 #mail status
 status = {}
-txt_status = r"status.txt"
-with open(txt_status, "r") as f:
-    for line in f:
-        key, value = line.strip().split(":")
-        status[key] = value
+txt_status = r'\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\status.txt'
+try:
+    with open(txt_status, "r") as f:
+        for line in f:
+            key, value = line.strip().split(":")
+            status[key] = value
+except Exception as e: 
+    print(e)
+    with open(r'\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\logs.txt', "a") as f:
+        f.write(str(e) + "\n")    
 print(status)
-
-if issues == status:
-    print("skip sending email")
-else:
-    with open(txt_status, 'w') as file:
-        for key, value in issues.items():
-            file.write(f"{key}:{value}\n")
-    if len(issues) == 0:
-        down_service = 'All Graphes are working'
+try:
+    if issues == status:
+        print("skip sending email")
     else:
-        down_service = '\n'.join([f"{key} : {value}" for key, value in issues.items()])
-    content = f"Dear Soc Team,\n\nPlease check the status of Graphes below:\n{down_service}\n\nBR\nAbdelrahman Ataa\nSoc Engineer"
-    print(content)
-    send_email(content)
+        with open(txt_status, 'w') as file:
+            for key, value in issues.items():
+                file.write(f"{key}:{value}\n")
+        if len(issues) == 0:
+            down_service = 'All Graphes are working'
+        else:
+            down_service = '\n'.join([f"{key} : {value}" for key, value in issues.items()])
+        content = f"Dear Soc Team,\n\nPlease check the status of Graphes below:\n{down_service}\n\nBR\nAbdelrahman Ataa\nSoc Engineer"
+        print(content)
+        send_email(content)
+
+except Exception as e: 
+    print(e)
+    with open(r'\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\logs.txt', "a") as f:
+        f.write(str(e) + "\n")
