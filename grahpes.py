@@ -22,7 +22,9 @@ from PIL import Image
 import platform
 issues = {}
 status = {}
-screen_folder_path = r"\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\screenshots"
+# screen_folder_path = r"\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\screenshots"
+screen_folder_path = r"screenshots"
+
 # screen_folder_path = r'screenshots'
 class InstaBot:
     def __init__(self, username, password,download_folder_name):
@@ -38,8 +40,8 @@ class InstaBot:
             os.makedirs(download_folder_path)
         url = "https://presentation.egyptpost.local"
         try:
-            geckodriver_path = r"\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\geckodriver.exe"  # Specify the path to geckodriver
-            # geckodriver_path = r'geckodriver'
+            # geckodriver_path = r"\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\geckodriver.exe"  
+            geckodriver_path = r'geckodriver'
             serv_obj = FirefoxService(executable_path=geckodriver_path)
             ops = FirefoxOptions()
             ops.set_preference("browser.download.folderList", 2)
@@ -327,40 +329,47 @@ class InstaBot:
 
 
 mybot=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads\Graphes")
-# # #Live_session
-for key, value in Live_session.items():
-    mybot.graphs_live_session(value)
+mybot1=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads\Graphes1")
 
 
-print("----------------------------------------------")
-# #Availability
-for key, value in Availability.items():
-    mybot.graphes_Availability(value)
-
-print("----------------------------------------------")
-#Oracle
-for key, value in Oracle.items():
-    mybot.graphs_Oracle(value)
-
-print("----------------------------------------------")
-
-#Thread_Pool
-for key, value in Thread_Pool.items():
-    mybot.graphs_Thread_Pool(value)
-
-print("----------------------------------------------")
-#Heap_Memory
-for key, value in Memory.items():
-    mybot.Memory(value,"//label[@for='501978508']")
+def fun1():
+    # # #Live_session
+    for key, value in Live_session.items():
+        mybot.graphs_live_session(value)
 
 
-print("----------------------------------------------")
-#Memory_Used
-for key, value in Memory.items():
-    mybot.Memory(value,"//label[@for='501978509']")
-  
+    print("----------------------------------------------")
+    # #Availability
+    for key, value in Availability.items():
+        mybot.graphes_Availability(value)
+
+    print("----------------------------------------------")
+    #Oracle
+    for key, value in Oracle.items():
+        mybot.graphs_Oracle(value)
+
+    mybot.Quit()
+
+
+    print("----------------------------------------------")
+def fun2():
+    #Thread_Pool
+    for key, value in Thread_Pool.items():
+        mybot.graphs_Thread_Pool(value)
+
+    print("----------------------------------------------")
+    #Heap_Memory
+    for key, value in Memory.items():
+        mybot.Memory(value,"//label[@for='501978508']")
+
+
+    print("----------------------------------------------")
+    #Memory_Used
+    for key, value in Memory.items():
+        mybot.Memory(value,"//label[@for='501978509']")
     
-mybot.Quit()
+    mybot1.Quit()
+
 
 
 
