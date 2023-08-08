@@ -4,6 +4,9 @@ from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from time import sleep
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 # from selenium.webdriver import ActionChains
 # from selenium.webdriver.common.keys import Keys
 # from selenium.common.exceptions import NoSuchElementException
@@ -14,58 +17,84 @@ import os
 import glob
 import csv
 from graphes_links import Live_session,Availability,Memory,Oracle,Thread_Pool,send_email
-
-
-
+from PIL import Image
+# import re
+import platform
+issues = {}
+status = {}
+screen_folder_path = r"\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\screenshots"
+# screen_folder_path = r'screenshots'
 class InstaBot:
-    def __init__(self,username,password):  
-        #webdriver
+    def __init__(self, username, password,download_folder_name):
+        download_folder_name = download_folder_name 
+        user_home = os.path.expanduser("~")
+        if platform.system() == "Windows":
+            print("Windows")
+            download_folder_path = os.path.join(user_home, download_folder_name)
+        else:  # Linux or other platforms
+            download_folder_path = os.path.join(os.path.expanduser("~"), download_folder_name)
+        print(download_folder_path)
+        if not os.path.exists(download_folder_path):
+            os.makedirs(download_folder_path)
+        url = "https://presentation.egyptpost.local"
         try:
-            url = "https://presentation.egyptpost.local"
-            serv_obj = service= Service(r'\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\geckodriver.exe')
-            ops=webdriver.FirefoxOptions()
-            #ops.headless=True        
-            self.driver = webdriver.Firefox(service=serv_obj,options=ops)
-            #launch
+            geckodriver_path = r"\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\geckodriver.exe"  # Specify the path to geckodriver
+            # geckodriver_path = r'geckodriver'
+            serv_obj = FirefoxService(executable_path=geckodriver_path)
+            ops = FirefoxOptions()
+            ops.set_preference("browser.download.folderList", 2)
+            ops.set_preference("browser.download.manager.showWhenStarting", False)
+            ops.set_preference("browser.download.dir", download_folder_path)
+            ops.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream")
+            ops.headless = True
+            # Create the Firefox driver with the configured options
+            self.driver = webdriver.Firefox(service=serv_obj, options=ops)
             self.driver.get(url)
             self.driver.implicitly_wait(20)
-            alert_window= self.driver.switch_to.alert                    #to get the alert message to var
-            alert_window.accept()      
-        except Exception as e :
-            print("Error", f"There is problem with geckodriver.exe or problem with internet \n  geckodriver هنالك مشكلة بالانترنت او بملف ")
-            #try to use chromedriver instead
+            alert_window = self.driver.switch_to.alert
+            alert_window.accept()
+
+        except Exception as e:
+            print("Error", "There is a problem with geckodriver.exe or the internet")
             try:
-                serv_obj = service= Service(r'\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\chromedriver.exe')
-                ops=webdriver.ChromeOptions()
-                #ops.headless=True        
-                self.driver = webdriver.Chrome(service=serv_obj,options=ops)
-                #launch
+                chromedriver_path = "chromedriver"  # Provide the path to the chromedriver executable
+                serv_obj = ChromeService(executable_path=chromedriver_path)
+                ops = webdriver.ChromeOptions()
+                # ops.headless = True
+                prefs = {
+                    "download.default_directory": download_folder_path,
+                    "download.prompt_for_download": False,
+                    "download.directory_upgrade": True,
+                    "safebrowsing.enabled": True
+                }
+                ops.add_experimental_option("prefs", prefs)
+                self.driver = webdriver.Chrome(service=serv_obj, options=ops)
                 self.driver.get(url)
                 self.driver.implicitly_wait(20)
-                alert_window= self.driver.switch_to.alert                    #to get the alert message to var
-                alert_window.accept()      
-            except Exception as e :
-                print("Error", f"There is problem with chromedriver.exe or problem with internet \n  chromedriver هنالك مشكلة بالانترنت او بملف ")
-                return 
+                alert_window = self.driver.switch_to.alert
+                alert_window.accept()
+            except Exception as e:
+                print("Error", "There is a problem with chromedriver.exe or the internet")
+                return
+            
         try:
-            self.username= username
-            self.password= password
+            self.username = username
+            self.password = password
             self.driver.find_element(By.XPATH, '//input[@id="user_login"]').send_keys(username)
             sleep(1)
-            #password
             self.driver.find_element(By.XPATH, '//input[@id="login_user_password"]').send_keys(password)
             sleep(1)
-            #login
             self.driver.find_element(By.XPATH, '//button[@id="login-jsp-btn"]').click()
             sleep(1)
             self.driver.maximize_window()
             sleep(5)
-        except Exception as e :
-            print("Error","Username or password uncorrecty or can't reach the page \n هنالك مشكلة بالانترنت او ان الاميل أوالباسورد خطأ")
-            return 
-        
+        except Exception as e:
+            print("Error", "Username or password is incorrect or can't reach the page \n هنالك مشكلة بالانترنت او ان الاميل أو الباسورد خطأ")
+            return
+    
     def lastfile_name(self):
-        download_folder_path = os.path.join(os.path.expanduser("~"), "Downloads")
+        download_folder_name = "Downloads/Graphes"
+        download_folder_path = os.path.join(os.path.expanduser("~"), download_folder_name)
         files_path = os.path.join(download_folder_path, '*')
         files = sorted(glob.iglob(files_path), key=os.path.getctime, reverse=True) 
         mylastfile = files[0] 
@@ -77,27 +106,57 @@ class InstaBot:
         os.remove(mylastfile)
         return last_value
 
+    def screen_shot(self,screen_name):
+        element = self.driver.find_element(By.XPATH, "(//section)[3]")  # Replace with your XPath expression
+        location = element.location
+        size = element.size
+        self.driver.save_screenshot(f"{screen_folder_path}/screenshot.png")
+        screenshot = Image.open(f"{screen_folder_path}/screenshot.png")
+        left = location['x']
+        top = location['y']
+        right = location['x'] + size['width']
+        bottom = location['y'] + size['height']
+        element_screenshot = screenshot.crop((left, top, right, bottom))
+        element_screenshot.save(f"{screen_folder_path}/{screen_name}.png")
+        os.remove(f"{screen_folder_path}/screenshot.png")
 
     def graphs_live_session(self,url):
         try:
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()      # tap click
             self.driver.find_element(By.XPATH, "//a[@class='ng-scope']").click()                    # edit
+            input_elements = self.driver.find_elements(By.XPATH, "(//div[@class='row metric-row'])[2]//label[1]/input")
+            try:
+                for input_element in input_elements:
+                    if input_element.is_selected():
+                        input_element.click()  # Click to unselect
+            except Exception as e: 
+                pass
             self.driver.find_element(By.XPATH, "//label[@for='501948505']").click()                 #live session 
             self.driver.find_element(By.XPATH, "//input[@id='applyConfigButton']").click()          # apply
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dateTimeSelection dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()     # time tap
             self.driver.find_element(By.XPATH, "//a[@id='customTimeFilterId']").click()                 #customTimeFilterId
-            self.driver.find_element(By.XPATH, "//table[contains(.,'End')]//button[@class='btn btn-default btn-sm btn-info active']/following::button[1]").click()       #next day
-            # date = self.driver.find_element(By.XPATH, "(//input[@placeholder='HH'])[2]")
-            # date.send_keys(Keys.BACKSPACE,Keys.BACKSPACE)
-            # date.send_keys("23")
+            self.driver.find_element(By.XPATH, "//table[contains(.,'End')]//button[@class='btn btn-default btn-sm btn-info active']/following::button[1]").click()       #next da      
+            self.driver.find_element(By.XPATH, "(//section)[3]")
             self.driver.find_element(By.XPATH, "//button[contains(@class,'btn ng-isolate-scope btn-primary')]").click()         #apply
             self.driver.find_element(By.XPATH, "(//a[@aria-label=' [Click, tap or press ENTER to open]'])[1]").click()          # download button
             self.driver.find_element(By.XPATH, "//a[normalize-space()='CSV']").click()              # download csv 
             date = self.lastfile_name()
+            # input_string = self.driver.find_element(By.XPATH, "//span[@id='sid']").text             # get name of server
+            # pattern = r'AppSrv(\d+)'
+            # match = re.search(pattern, input_string)
+            # if match:
+            #     app_srv_value = match.group(1)
+            # else:
+            #     print("AppSrv value not found")
+            # Service_name = self.driver.find_element(By.XPATH, "//*[name()='g' and contains(@role,'switch')]").text 
+            # screen_name = app_srv_value +"_" + Service_name
+            print(f"{key}: {date}")
+            if int(date) >= 1800:
+                issues[key] = date
+                self.screen_shot(key)
             self.driver.refresh()
             sleep(1)
-            return  date 
         #except NoSuchElementException or StaleElementReferenceException as e :
         except Exception as e:
             print(e)
@@ -105,8 +164,6 @@ class InstaBot:
         
     def graphes_Availability(self,url):
         try:
-            # action_chains = ActionChains(self.driver)
-            # action_chains.send_keys(Keys.ESCAPE,Keys.ESCAPE).perform()
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dateTimeSelection dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()     # time tap
             self.driver.find_element(By.XPATH, "//a[@id='customTimeFilterId']").click()                 #customTimeFilterId
@@ -115,9 +172,21 @@ class InstaBot:
             self.driver.find_element(By.XPATH, "(//a[@aria-label=' [Click, tap or press ENTER to open]'])[1]").click()          # download button
             self.driver.find_element(By.XPATH, "//a[normalize-space()='CSV']").click()              # download csv 
             date = self.lastfile_name()
+            # input_string = self.driver.find_element(By.XPATH, "//span[@id='sid']").text             # get name of server
+            # pattern = r'AppSrv(\d+)'
+            # match = re.search(pattern, input_string)
+            # if match:
+            #     app_srv_value = match.group(1)
+            # else:
+            #     print("AppSrv value not found")
+            # Service_name = self.driver.find_element(By.XPATH, "//*[name()='g' and contains(@role,'switch')]").text 
+            # screen_name = app_srv_value +"_" + Service_name
+            print(f"{key}: {date}")
+            if int(date) == 1:
+                issues[key] = date
+                self.screen_shot(key)
             self.driver.refresh()
             sleep(1)
-            return  date      # get the last value in sec column 
         #except NoSuchElementException or StaleElementReferenceException as e :
         except Exception as e:
             print(e)
@@ -128,8 +197,13 @@ class InstaBot:
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()      # tap click
             self.driver.find_element(By.XPATH, "//a[@class='ng-scope']").click()                    # edit
-            self.driver.find_element(By.XPATH, "//label[@for='501940512']").click()                 #  unchecked Connections Created (#)
-            self.driver.find_element(By.XPATH, "//label[@for='501940513']").click()                 #  unchecked 	Connections Destroyed (#) 
+            input_elements = self.driver.find_elements(By.XPATH, "(//div[@class='row metric-row'])[2]//label[1]/input")
+            try:
+                for input_element in input_elements:
+                    if input_element.is_selected():
+                        input_element.click()  # Click to unselect
+            except Exception as e: 
+                pass
             self.driver.find_element(By.XPATH, "//label[@for='501940506']").click()                 #  Connection Pool Utilization (%)
             self.driver.find_element(By.XPATH, "//input[@id='applyConfigButton']").click()          # apply
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dateTimeSelection dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()     # time tap
@@ -139,9 +213,21 @@ class InstaBot:
             self.driver.find_element(By.XPATH, "(//a[@aria-label=' [Click, tap or press ENTER to open]'])[1]").click()          # download button
             self.driver.find_element(By.XPATH, "//a[normalize-space()='CSV']").click()              # download csv 
             date = self.lastfile_name()
+            # input_string = self.driver.find_element(By.XPATH, "//span[@id='sid']").text             # get name of server
+            # pattern = r'AppSrv(\d+)'
+            # match = re.search(pattern, input_string)
+            # if match:
+            #     app_srv_value = match.group(1)
+            # else:
+            #     print("AppSrv value not found")
+            # Service_name = self.driver.find_element(By.XPATH, "//*[name()='g' and contains(@role,'switch')]").text 
+            # screen_name = app_srv_value +"_" + Service_name
+            print(f"{key}: {date}")
+            if int(date) > 80:
+                issues[key] = date
+                self.screen_shot(key)
             self.driver.refresh()
             sleep(1)
-            return  date 
         #except NoSuchElementException or StaleElementReferenceException as e :
         except Exception as e:
             print(e)
@@ -153,6 +239,13 @@ class InstaBot:
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()      # tap click
             self.driver.find_element(By.XPATH, "//a[@class='ng-scope']").click()                    # edit
+            input_elements = self.driver.find_elements(By.XPATH, "(//div[@class='row metric-row'])[2]//label[1]/input")
+            try:
+                for input_element in input_elements:
+                    if input_element.is_selected():
+                        input_element.click()  # Click to unselect
+            except Exception as e: 
+                pass
             self.driver.find_element(By.XPATH, "//label[@for='501930510']").click()                 #Threads in Pool 
             self.driver.find_element(By.XPATH, "//input[@id='applyConfigButton']").click()          # apply
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dateTimeSelection dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()     # time tap
@@ -162,9 +255,21 @@ class InstaBot:
             self.driver.find_element(By.XPATH, "(//a[@aria-label=' [Click, tap or press ENTER to open]'])[1]").click()          # download button
             self.driver.find_element(By.XPATH, "//a[normalize-space()='CSV']").click()              # download csv 
             date = self.lastfile_name()
+            # input_string = self.driver.find_element(By.XPATH, "//span[@id='sid']").text             # get name of server
+            # pattern = r'AppSrv(\d+)'
+            # match = re.search(pattern, input_string)
+            # if match:
+            #     app_srv_value = match.group(1)
+            # else:
+            #     print("AppSrv value not found")
+            # Service_name = self.driver.find_element(By.XPATH, "//*[name()='g' and contains(@role,'switch')]").text 
+            # screen_name = app_srv_value +"_" + Service_name
+            print(f"{key}: {date}")
+            if int(date) > 132:
+                issues[key] = date
+                self.screen_shot(key)
             self.driver.refresh()
             sleep(1)
-            return  date 
         #except NoSuchElementException or StaleElementReferenceException as e :
         except Exception as e:
             print(e)
@@ -175,11 +280,14 @@ class InstaBot:
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()      # tap click
             self.driver.find_element(By.XPATH, "//a[@class='ng-scope']").click()                    # edit
-            self.driver.find_element(By.XPATH, "//label[@for='501978515']").click()                 #  unchecked Total memory 
-            self.driver.find_element(By.XPATH, "//label[@for='501978516']").click()                 #  unchecked 	 Used Memory in JVM Runtime  
-            self.driver.find_element(By.XPATH, "//label[@for='501978502']").click()                 #  unchecked 	 Free Memory in JVM Runtime  
-            self.driver.find_element(By.XPATH, "//label[@for='501978511']").click()                 #  unchecked 	 The average percent of CPU usage since the last query
-            self.driver.find_element(By.XPATH, memory).click()        #  unchecked 	 Percentage of Memory Used  OR Heap    
+            input_elements = self.driver.find_elements(By.XPATH, "(//div[@class='row metric-row'])[2]//label[1]/input")
+            try:
+                for input_element in input_elements:
+                    if input_element.is_selected():
+                        input_element.click()  # Click to unselect
+            except Exception as e: 
+                pass
+            self.driver.find_element(By.XPATH, memory).click()        #check Percentage of Memory Used  OR Heap    
             self.driver.find_element(By.XPATH, "//input[@id='applyConfigButton']").click()          # apply
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dateTimeSelection dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()     # time tap
             self.driver.find_element(By.XPATH, "//a[@id='customTimeFilterId']").click()                 #customTimeFilterId
@@ -188,14 +296,26 @@ class InstaBot:
             self.driver.find_element(By.XPATH, "(//a[@aria-label=' [Click, tap or press ENTER to open]'])[1]").click()          # download button
             self.driver.find_element(By.XPATH, "//a[normalize-space()='CSV']").click()              # download csv 
             date = self.lastfile_name()
+            # input_string = self.driver.find_element(By.XPATH, "//span[@id='sid']").text             # get name of server
+            # pattern = r'AppSrv(\d+)'
+            # match = re.search(pattern, input_string)
+            # if match:
+            #     app_srv_value = match.group(1)
+            # else:
+            #     print("AppSrv value not found")
+            # Service_name = self.driver.find_element(By.XPATH, "//*[name()='g' and contains(@role,'switch')]").text 
+            # screen_name = app_srv_value +"_" + Service_name
+            print(f"{key}: {date}")
+            if float(date) > 95.00:
+                issues[key] = date
+                self.screen_shot(key)
             self.driver.refresh()
             sleep(1)
-            return  date 
+            
         #except NoSuchElementException or StaleElementReferenceException as e :
         except Exception as e:
             print(e)
             return None 
-        
 
 
     def Quit(self):
@@ -206,67 +326,48 @@ class InstaBot:
 
 
 
-mybot=InstaBot("w_abdelrahman.ataa", "a1591997A!")
-issues = {}
-# #Live_session
+mybot=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads\Graphes")
+# # #Live_session
 for key, value in Live_session.items():
-    Live_session_status = mybot.graphs_live_session(value)
-    print(f"{key}: {Live_session_status}")
-    if int(Live_session_status) >= 1800:
-        issues[key] = Live_session_status
+    mybot.graphs_live_session(value)
+
 
 print("----------------------------------------------")
 # #Availability
 for key, value in Availability.items():
-    Availability_status = mybot.graphes_Availability(value)
-    print(f"{key}: {Availability_status}")
-    if int(Availability_status) == 1:
-        issues[key] = Availability_status
+    mybot.graphes_Availability(value)
+
 print("----------------------------------------------")
 #Oracle
 for key, value in Oracle.items():
-    Oracle_status = mybot.graphs_Oracle(value)
-    print(f"{key}: {Oracle_status}")
-    if int(Oracle_status) > 80:
-        issues[key] = Oracle_status
+    mybot.graphs_Oracle(value)
+
 print("----------------------------------------------")
 
 #Thread_Pool
 for key, value in Thread_Pool.items():
-    Thread_Pool_status = mybot.graphs_Thread_Pool(value)
-    print(f"{key}: {Thread_Pool_status}")
-    if int(Thread_Pool_status) > 133:
-        issues[key] = Thread_Pool_status
+    mybot.graphs_Thread_Pool(value)
 
 print("----------------------------------------------")
-# #Heap_Memory
-# for key, value in Memory.items():
-#     Heap_Memory_status = mybot.Memory(value,"//label[@for='501978509']")
-#     key_Heap = f"{key}_Heap"
-#     print(f"{key_Heap}: {Heap_Memory_status}")
-#     if float(Heap_Memory_status) > 80.00:
-#         issues[key_Heap] = Heap_Memory_status
+#Heap_Memory
+for key, value in Memory.items():
+    mybot.Memory(value,"//label[@for='501978508']")
 
 
-# print("----------------------------------------------")
-# #Memory_Used
-# for key, value in Memory.items():
-#     Memory_Used_status = mybot.Memory(value,"//label[@for='501978508']")
-#     key_used = f"{key}_Used"
-#     print(f"{key_used}: {Memory_Used_status}")
-#     if float(Memory_Used_status) > 90.00:
-#         issues[key_used] = Memory_Used_status
+print("----------------------------------------------")
+#Memory_Used
+for key, value in Memory.items():
+    mybot.Memory(value,"//label[@for='501978509']")
+  
     
 mybot.Quit()
 
 
-print(issues)
 
 
 
 
-#mail status
-status = {}
+all_urls = {**Live_session, **Availability, **Memory, **Oracle, **Thread_Pool}
 txt_status = r'\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\status.txt'
 try:
     with open(txt_status, "r") as f:
@@ -276,22 +377,45 @@ try:
 except Exception as e: 
     print(e)
     with open(r'\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\logs.txt', "a") as f:
-        f.write(str(e) + "\n")    
-print(status)
+        f.write(str(e) + "\n")   
+
+print(f"status: {status}")
+print(f"issues: {issues}")
+
 try:
-    if issues == status:
+    if set(status.keys()) == set(issues.keys()):
         print("skip sending email")
+        for filename in os.listdir(screen_folder_path):
+            if filename.lower().endswith('.png'):
+                file_path = os.path.join(screen_folder_path, filename)
+                os.remove(file_path)
     else:
+        print("gonna send mail")
         with open(txt_status, 'w') as file:
             for key, value in issues.items():
                 file.write(f"{key}:{value}\n")
         if len(issues) == 0:
             down_service = 'All Graphes are working'
+            content = f"Dear Soc Team,<br><br>Please check the status of Graphes below:<br>{down_service}<br><br>BR<br>Abdelrahman Ataa<br>Soc Engineer"
+            send_email(content, screen_folder_path)
         else:
-            down_service = '\n'.join([f"{key} : {value}" for key, value in issues.items()])
-        content = f"Dear Soc Team,\n\nPlease check the status of Graphes below:\n{down_service}\n\nBR\nAbdelrahman Ataa\nSoc Engineer"
-        print(content)
-        send_email(content)
+            formatted_issues = []
+            for key, value in issues.items():
+                        if key in all_urls:
+                            url = all_urls[key]
+                            hyperlink = f'<a href="{url}">{key}</a>'
+                            formatted_issues.append(f"{hyperlink}: {value}")
+                        else:
+                            formatted_issues.append(f"{key}: {value}")
+            if len(formatted_issues) > 0:
+                print(f"formatted_issues: {formatted_issues}")
+                down_service = '<br>'.join(formatted_issues)
+                content = f"Dear Soc Team,<br><br>Please check the status of Graphes below:<br>{down_service}<br><br>BR<br>Abdelrahman Ataa<br>Soc Engineer"
+                send_email(content, screen_folder_path)               
+        for filename in os.listdir(screen_folder_path):
+            if filename.lower().endswith('.png'):
+                file_path = os.path.join(screen_folder_path, filename)
+                os.remove(file_path)
 
 except Exception as e: 
     print(e)
