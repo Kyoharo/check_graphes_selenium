@@ -17,14 +17,14 @@ import concurrent.futures
 import os
 import glob
 import csv
-from graphes_links import Live_session,Availability,Memory,Oracle,Thread_Pool,send_email
+from graphes_links import Live_session,Availability,Memory,Oracle,Thread_Pool,recverence,send_email
 from PIL import Image
 # import re
 import platform
 issues = {}
 status = {}
-# screen_folder_path = r"\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\screenshots"
-screen_folder_path = r"screenshots"
+screen_folder_path = r"\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\screenshots"
+# screen_folder_path = r"screenshots"
 
 # screen_folder_path = r'screenshots'
 class InstaBot:
@@ -41,15 +41,17 @@ class InstaBot:
             os.makedirs(download_folder_path)
         url = "https://presentation.egyptpost.local"
         try:
-            # geckodriver_path = r"\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\geckodriver.exe"  
-            geckodriver_path = r'geckodriver'
+            geckodriver_path = r"\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\geckodriver.exe"  
+            # geckodriver_path = r'geckodriver'
             serv_obj = FirefoxService(executable_path=geckodriver_path)
             ops = FirefoxOptions()
             ops.set_preference("browser.download.folderList", 2)
             ops.set_preference("browser.download.manager.showWhenStarting", False)
             ops.set_preference("browser.download.dir", download_folder_path)
             ops.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream")
-            # ops.headless = True
+            ops.add_argument('-width=1920')
+            ops.add_argument('-height=1080')
+            ops.headless = True
             # Create the Firefox driver with the configured options
             self.driver = webdriver.Firefox(service=serv_obj, options=ops)
             self.driver.get(url)
@@ -63,7 +65,7 @@ class InstaBot:
                 chromedriver_path = "chromedriver"  # Provide the path to the chromedriver executable
                 serv_obj = ChromeService(executable_path=chromedriver_path)
                 ops = webdriver.ChromeOptions()
-                # ops.headless = True
+                ops.headless = True
                 prefs = {
                     "download.default_directory": download_folder_path,
                     "download.prompt_for_download": False,
@@ -108,17 +110,19 @@ class InstaBot:
         last_value = data[-1][1]
         os.remove(mylastfile)
         return last_value
-
+    
     def screen_shot(self,screen_name):
+        self.driver.execute_script('window.scrollTo(0,document.body.scrollHeight)')
         element = self.driver.find_element(By.XPATH, "(//section)[3]")  # Replace with your XPath expression
         location = element.location
         size = element.size
         self.driver.save_screenshot(f"{screen_folder_path}/screenshot.png")
         screenshot = Image.open(f"{screen_folder_path}/screenshot.png")
-        left = location['x']
-        top = location['y']
+        extra_height=240
+        left = location['x'] 
+        top = location['y'] - extra_height
         right = location['x'] + size['width']
-        bottom = location['y'] + size['height']
+        bottom = location['y'] + size['height'] - 230
         element_screenshot = screenshot.crop((left, top, right, bottom))
         element_screenshot.save(f"{screen_folder_path}/{screen_name}.png")
         os.remove(f"{screen_folder_path}/screenshot.png")
@@ -329,11 +333,10 @@ class InstaBot:
 
 
 
-mybot=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads/Graphes")
-mybot1=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads/Graphes1")
 
 
 def fun1():
+    mybot=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads\Graphes")
     # # #Live_session
     for key, value in Live_session.items():
         mybot.graphs_live_session(key, value)
@@ -354,6 +357,7 @@ def fun1():
 
     print("----------------------------------------------")
 def fun2():
+    mybot1=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads\Graphes1")
     #Thread_Pool
     for key, value in Thread_Pool.items():
         mybot1.graphs_Thread_Pool(key, value)
@@ -429,7 +433,7 @@ try:
             if len(formatted_issues) > 0:
                 print(f"formatted_issues: {formatted_issues}")
                 down_service = '<br>'.join(formatted_issues)
-                content = f"Dear Soc Team,<br><br>Please check the status of Graphes below:<br>{down_service}<br><br>BR<br>Abdelrahman Ataa<br>Soc Engineer"
+                content = f"Dear Soc Team,<br><br>Please check the status of Graphes below:<br>{down_service}<br><br>{recverence}<br>BR<br>Abdelrahman Ataa<br>Soc Engineer"
                 send_email(content, screen_folder_path)               
         for filename in os.listdir(screen_folder_path):
             if filename.lower().endswith('.png'):

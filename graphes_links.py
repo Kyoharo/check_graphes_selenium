@@ -45,6 +45,29 @@ Memory = {
 'Appsrv06_Memory':'https://presentation.egyptpost.local/#/monitors/501978+296617/1/perfOverviewTab'
 }
 
+recverence =  '''
+---------------------------------------<br>
+REVERENCE:<br>
+=============<br>
+Live Session:<br>
+    To: Wehad-Ahmed@EgyptPost.Org ; amr.bishry@EgyptPost.Org ; Nizar.Yousri@EgyptPost.Org ;<br> 
+<br>
+Availability:<br>
+    To: Wehad-Ahmed@EgyptPost.Org ; amr.bishry@EgyptPost.Org ; Nizar.Yousri@EgyptPost.Org ;<br> 
+<br>
+Oracle      :<br>
+    To: db_admin@EgyptPost.Org ;  Sara.bashandi@EgyptPost.Org ; Wehad-Ahmed@EgyptPost.Org<br> 
+<br>
+Thread Pool :<br>
+    To: Wehad-Ahmed@EgyptPost.Org ; amr.bishry@EgyptPost.Org ; Nizar.Yousri@EgyptPost.Org ;<br> 
+<br>
+Memory&Heap :<br>
+    To: Wehad-Ahmed@EgyptPost.Org ; amr.bishry@EgyptPost.Org ; Nizar.Yousri@EgyptPost.Org ;<br> 
+<br>
+CC: Alnasser.mohamed@EgyptPost.Org ; W_SOC_TEAM@EgyptPost.Org ; SOC_supervisors@EgyptPost.Org<br>
+---------------------------------------<br>
+'''     
+
 import os
 import smtplib
 from email.message import EmailMessage
@@ -81,3 +104,4 @@ def send_email(body_message, folder_path):
         server.set_debuglevel(1)  # Enable debug output for troubleshooting
         server.ehlo()
         server.sendmail(sender_email, recipient_emails, message.as_string())
+
