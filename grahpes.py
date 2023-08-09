@@ -7,6 +7,7 @@ from time import sleep
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
+import concurrent.futures
 # from selenium.webdriver import ActionChains
 # from selenium.webdriver.common.keys import Keys
 # from selenium.common.exceptions import NoSuchElementException
@@ -28,7 +29,7 @@ screen_folder_path = r"screenshots"
 # screen_folder_path = r'screenshots'
 class InstaBot:
     def __init__(self, username, password,download_folder_name):
-        download_folder_name = download_folder_name 
+        self.download_folder_name = download_folder_name 
         user_home = os.path.expanduser("~")
         if platform.system() == "Windows":
             print("Windows")
@@ -48,7 +49,7 @@ class InstaBot:
             ops.set_preference("browser.download.manager.showWhenStarting", False)
             ops.set_preference("browser.download.dir", download_folder_path)
             ops.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream")
-            ops.headless = True
+            # ops.headless = True
             # Create the Firefox driver with the configured options
             self.driver = webdriver.Firefox(service=serv_obj, options=ops)
             self.driver.get(url)
@@ -95,7 +96,7 @@ class InstaBot:
             return
     
     def lastfile_name(self):
-        download_folder_name = "Downloads/Graphes"
+        download_folder_name = self.download_folder_name
         download_folder_path = os.path.join(os.path.expanduser("~"), download_folder_name)
         files_path = os.path.join(download_folder_path, '*')
         files = sorted(glob.iglob(files_path), key=os.path.getctime, reverse=True) 
@@ -122,7 +123,7 @@ class InstaBot:
         element_screenshot.save(f"{screen_folder_path}/{screen_name}.png")
         os.remove(f"{screen_folder_path}/screenshot.png")
 
-    def graphs_live_session(self,url):
+    def graphs_live_session(self,key,url):
         try:
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()      # tap click
@@ -164,7 +165,7 @@ class InstaBot:
             print(e)
             return None 
         
-    def graphes_Availability(self,url):
+    def graphes_Availability(self,key,url):
         try:
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dateTimeSelection dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()     # time tap
@@ -194,7 +195,7 @@ class InstaBot:
             print(e)
             return None 
         
-    def graphs_Oracle(self,url):
+    def graphs_Oracle(self,key,url):
         try:
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()      # tap click
@@ -236,7 +237,7 @@ class InstaBot:
             return None 
         
 
-    def graphs_Thread_Pool(self,url):
+    def graphs_Thread_Pool(self,key,url):
         try:
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()      # tap click
@@ -277,7 +278,7 @@ class InstaBot:
             print(e)
             return None 
         
-    def Memory(self,url,memory):
+    def Memory(self,key,url,memory):
         try:
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()      # tap click
@@ -328,25 +329,25 @@ class InstaBot:
 
 
 
-mybot=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads\Graphes")
-mybot1=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads\Graphes1")
+mybot=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads/Graphes")
+mybot1=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads/Graphes1")
 
 
 def fun1():
     # # #Live_session
     for key, value in Live_session.items():
-        mybot.graphs_live_session(value)
+        mybot.graphs_live_session(key, value)
 
 
     print("----------------------------------------------")
     # #Availability
     for key, value in Availability.items():
-        mybot.graphes_Availability(value)
+        mybot.graphes_Availability(key, value)
 
     print("----------------------------------------------")
     #Oracle
     for key, value in Oracle.items():
-        mybot.graphs_Oracle(value)
+        mybot.graphs_Oracle(key, value)
 
     mybot.Quit()
 
@@ -355,21 +356,30 @@ def fun1():
 def fun2():
     #Thread_Pool
     for key, value in Thread_Pool.items():
-        mybot.graphs_Thread_Pool(value)
+        mybot1.graphs_Thread_Pool(key, value)
 
     print("----------------------------------------------")
-    #Heap_Memory
+    #Heap_Memoryx
     for key, value in Memory.items():
-        mybot.Memory(value,"//label[@for='501978508']")
+        mybot1.Memory(key, value,"//label[@for='501978508']")
 
 
     print("----------------------------------------------")
     #Memory_Used
     for key, value in Memory.items():
-        mybot.Memory(value,"//label[@for='501978509']")
+        mybot1.Memory(key, value,"//label[@for='501978509']")
     
     mybot1.Quit()
 
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+    future_fun1 = executor.submit(fun1)
+    future_fun2 = executor.submit(fun2)
+
+    # Wait for both tasks to complete
+    concurrent.futures.wait([future_fun1, future_fun2])
+
+print("Both fun1 and fun2 have completed.")
 
 
 
