@@ -80,7 +80,7 @@ def send_email(body_message, folder_path):
     recipient_emails = ['W_Abdelrahman.Ataa@EgyptPost.Org',
                          'w_soc_team@egyptpost.org',
                          'SOC_supervisors@EgyptPost.Org']
-    subject = 'Graphes status'
+    subject = 'Graphs status'
 
     # Create the email message
     message = EmailMessage()

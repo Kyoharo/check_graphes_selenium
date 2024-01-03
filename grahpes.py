@@ -129,6 +129,10 @@ class InstaBot:
 
     def graphs_live_session(self,key,url):
         try:
+            start_input = {
+            "KEY": key,
+            "URL": url
+            }
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()      # tap click
             self.driver.find_element(By.XPATH, "//a[@class='ng-scope']").click()                    # edit
@@ -166,11 +170,16 @@ class InstaBot:
             sleep(1)
         #except NoSuchElementException or StaleElementReferenceException as e :
         except Exception as e:
-            print(e)
-            return None 
+            self.graphs_live_session(self,
+                                     start_input["KEY"],
+                                      start_input["URL"])
         
     def graphes_Availability(self,key,url):
         try:
+            start_input = {
+            "KEY": key,
+            "URL": url
+            }
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dateTimeSelection dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()     # time tap
             self.driver.find_element(By.XPATH, "//a[@id='customTimeFilterId']").click()                 #customTimeFilterId
@@ -196,11 +205,16 @@ class InstaBot:
             sleep(1)
         #except NoSuchElementException or StaleElementReferenceException as e :
         except Exception as e:
-            print(e)
-            return None 
+            self.graphes_Availability(self,
+                                     start_input["KEY"],
+                                      start_input["URL"])
         
     def graphs_Oracle(self,key,url):
         try:
+            start_input = {
+            "KEY": key,
+            "URL": url
+            }
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()      # tap click
             self.driver.find_element(By.XPATH, "//a[@class='ng-scope']").click()                    # edit
@@ -237,12 +251,17 @@ class InstaBot:
             sleep(1)
         #except NoSuchElementException or StaleElementReferenceException as e :
         except Exception as e:
-            print(e)
-            return None 
+            self.graphs_Oracle(self,
+                                                start_input["KEY"],
+                                                start_input["URL"])
         
 
     def graphs_Thread_Pool(self,key,url):
         try:
+            start_input = {
+            "KEY": key,
+            "URL": url
+            }
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()      # tap click
             self.driver.find_element(By.XPATH, "//a[@class='ng-scope']").click()                    # edit
@@ -279,11 +298,17 @@ class InstaBot:
             sleep(1)
         #except NoSuchElementException or StaleElementReferenceException as e :
         except Exception as e:
-            print(e)
-            return None 
+            self.graphs_Thread_Pool(self,
+                                                start_input["KEY"],
+                                                start_input["URL"])
         
     def Memory(self,key,url,memory):
         try:
+            start_input = {
+            "KEY": key,
+            "URL": url,
+            "MEMORY":memory
+            }
             self.driver.get(url)
             self.driver.find_element(By.XPATH, "//span[@class='bmc-actionmenu dropdown']//a[@class='fi menuIcon fi-action-menu dropdown-toggle']").click()      # tap click
             self.driver.find_element(By.XPATH, "//a[@class='ng-scope']").click()                    # edit
@@ -321,8 +346,10 @@ class InstaBot:
             
         #except NoSuchElementException or StaleElementReferenceException as e :
         except Exception as e:
-            print(e)
-            return None 
+            self.Memory(self,
+                                                start_input["KEY"],
+                                                start_input["URL"],
+                                                start_input["MEMORY"])
 
 
     def Quit(self):
@@ -418,8 +445,8 @@ try:
             for key, value in issues.items():
                 file.write(f"{key}:{value}\n")
         if len(issues) == 0:
-            down_service = 'All Graphes are working'
-            content = f"Dear Soc Team,<br><br>Please check the status of Graphes below:<br>{down_service}<br><br>BR<br>Abdelrahman Ataa<br>Soc Engineer"
+            down_service = 'All Graphs are working'
+            content = f"Dear Soc Team,<br><br>Please check the status of Graphs below:<br>{down_service}<br><br>BR<br>Abdelrahman Ataa<br>Soc Engineer"
             send_email(content, screen_folder_path)
         else:
             formatted_issues = []
@@ -433,7 +460,7 @@ try:
             if len(formatted_issues) > 0:
                 print(f"formatted_issues: {formatted_issues}")
                 down_service = '<br>'.join(formatted_issues)
-                content = f"Dear Soc Team,<br><br>Please check the status of Graphes below:<br>{down_service}<br><br>{recverence}<br>BR<br>Abdelrahman Ataa<br>Soc Engineer"
+                content = f"Dear Soc Team,<br><br>Please check the status of Graphs below:<br>{down_service}<br><br>{recverence}<br>BR<br>Abdelrahman Ataa<br>Soc Engineer"
                 send_email(content, screen_folder_path)               
         for filename in os.listdir(screen_folder_path):
             if filename.lower().endswith('.png'):
