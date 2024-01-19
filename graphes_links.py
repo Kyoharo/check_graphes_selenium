@@ -45,6 +45,22 @@ Memory = {
 'Appsrv06_Memory':'https://presentation.egyptpost.local/#/monitors/501978+296617/1/perfOverviewTab'
 }
 
+exchange = {
+'ep-ex-smart-01_EXCHANGE':'https://presentation.egyptpost.local/#/monitors/501024+275227/1/perfOverviewTab',
+'ep-maadi-mbx9_EXCHANGE':'https://presentation.egyptpost.local/#/monitors/501024+47371/1/perfOverviewTab',
+'ep-ex-cas1_EXCHANGE':'https://presentation.egyptpost.local/#/monitors/501024+151266/1/perfOverviewTab',
+'ep-ex-cas8_EXCHANGE':'https://presentation.egyptpost.local/#/monitors/501024+455646/1/perfOverviewTab',
+'ep-ex-cas6_EXCHANGE':'https://presentation.egyptpost.local/#/monitors/501024+46950/1/perfOverviewTab'
+}
+
+frontoffice = {
+'FrontOffice_054_FrontOffice_LoginStatus':'https://presentation.egyptpost.local/#/monitors/501566+287661/1/perfOverviewTab',
+'p-fo-03-13-0_FrontOffice_LoginStatus':'https://presentation.egyptpost.local/#/monitors/501566+287639/1/perfOverviewTab',
+'P-FO-03-14_FrontOffice_LoginStatus':'https://presentation.egyptpost.local/#/monitors/501566+287625/1/perfOverviewTab',
+'FrontOffice_015_FrontOffice_LoginStatus':'https://presentation.egyptpost.local/#/monitors/501566+287611/1/perfOverviewTab',
+'FrontOffice_010_FrontOffice_LoginStatus':'https://presentation.egyptpost.local/#/monitors/501566+287594/1/perfOverviewTab'
+}
+
 recverence =  '''
 ---------------------------------------<br>
 REVERENCE:<br>
@@ -63,6 +79,12 @@ Thread Pool :<br>
 <br>
 Memory&Heap :<br>
     To: Wehad-Ahmed@EgyptPost.Org ; amr.bishry@EgyptPost.Org ; Nizar.Yousri@EgyptPost.Org ;<br> 
+<br>
+Exchange :<br>
+    To: Eman.madbouly@egyptpost.org ; abdelmonem@egyptpost.org ; melsaid@EgyptPost.Org ; Hisham_gaber@EgyptPost.Org; <br> 
+<br>
+FrontOffice :<br>
+    To: Ataha@egyptpost.org ; postal-support@EgyptPost.Org ; ehab_hussein@EgyptPost.Org ;<br> 
 <br>
 CC: Alnasser.mohamed@EgyptPost.Org ; W_SOC_TEAM@EgyptPost.Org ; SOC_supervisors@EgyptPost.Org<br>
 ---------------------------------------<br>
