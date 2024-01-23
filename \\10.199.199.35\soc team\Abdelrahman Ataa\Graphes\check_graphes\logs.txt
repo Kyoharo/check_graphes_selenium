@@ -1,7 +1,0 @@
-[Errno 2] No such file or directory: '\\\\10.199.199.35\\soc team\\Abdelrahman Ataa\\Graphes\\check_graphes\\screenshots'
-[Errno 2] No such file or directory: '\\\\10.199.199.35\\soc team\\Abdelrahman Ataa\\Graphes\\check_graphes\\screenshots'
-[Errno 2] No such file or directory: '\\\\10.199.199.35\\soc team\\Abdelrahman Ataa\\Graphes\\check_graphes\\screenshots'
-[Errno 2] No such file or directory: '\\\\10.199.199.35\\soc team\\Abdelrahman Ataa\\Graphes\\check_graphes\\screenshots'
-[Errno 2] No such file or directory: '\\\\10.199.199.35\\soc team\\Abdelrahman Ataa\\Graphes\\check_graphes\\screenshots'
-[Errno 2] No such file or directory: '\\\\10.199.199.35\\soc team\\Abdelrahman Ataa\\Graphes\\check_graphes\\screenshots'
-[Errno 2] No such file or directory: '\\\\10.199.199.35\\soc team\\Abdelrahman Ataa\\Graphes\\check_graphes\\screenshots'

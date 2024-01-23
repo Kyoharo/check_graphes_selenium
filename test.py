@@ -18,7 +18,7 @@ def send_email(body_message, folder_path):
     message['From'] = sender_email
     message['To'] = ', '.join(recipient_emails)
 
-    # Attach images from the specified folder if it's notffff empty
+    # Attach images from the specified folder if it's not empty
     if os.listdir(folder_path):
         for filename in os.listdir(folder_path):
             if filename.endswith('.jpg') or filename.endswith('.png'):  # Add more extensions if needed
