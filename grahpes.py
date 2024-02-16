@@ -21,9 +21,16 @@ from graphes_links import Live_session,Availability,Memory,exchange,frontoffice,
 from PIL import Image
 # import re
 import platform
+
+import os
+from dotenv import load_dotenv
+from time import sleep
+env_path = "C:\\env\\Graphs\\.env"  
+load_dotenv(dotenv_path=env_path)
+
 issues = {}
 status = {}
-screen_folder_path = r"\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\screenshots"
+screen_folder_path = os.getenv("screen_folder_path")
 # screen_folder_path = r"screenshots"
 
 # screen_folder_path = r'screenshots'
@@ -41,9 +48,7 @@ class InstaBot:
             os.makedirs(download_folder_path)
         url = "https://presentation.egyptpost.local"
         try:
-            geckodriver_path = r"\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\geckodriver.exe"  
-            # geckodriver_path = r'geckodriver'
-            serv_obj = FirefoxService(executable_path=geckodriver_path)
+            serv_obj = service= Service(os.getenv("geckodriver"))
             ops = FirefoxOptions()
             ops.set_preference("browser.download.folderList", 2)
             ops.set_preference("browser.download.manager.showWhenStarting", False)
@@ -62,7 +67,7 @@ class InstaBot:
         except Exception as e:
             print("Error", "There is a problem with geckodriver.exe or the internet")
             try:
-                chromedriver_path = "chromedriver"  # Provide the path to the chromedriver executable
+                chromedriver_path =os.getenv("chromedriver")
                 serv_obj = ChromeService(executable_path=chromedriver_path)
                 ops = webdriver.ChromeOptions()
                 ops.headless = True
@@ -453,62 +458,76 @@ class InstaBot:
 
 
 
+username = os.getenv("name")
+passwd =  os.getenv("passwd")
+download_location01= os.getenv("download_location01")
+download_location02= os.getenv("download_location02")
 
+print(f"{username}: {passwd}")
 
 def fun1():
-    mybot=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads\Graphes")
-    # # #Live_session
-    for key, value in Live_session.items():
-        mybot.graphs_live_session(key, value)
+    try:
+        mybot=InstaBot(username, passwd,download_location01)
+        # # #Live_session
+        for key, value in Live_session.items():
+            mybot.graphs_live_session(key, value)
 
 
-    print("----------------------------------------------")
-    # #Availability
-    for key, value in Availability.items():
-        mybot.graphes_Availability(key, value)
+        print("----------------------------------------------")
+        # #Availability
+        for key, value in Availability.items():
+            mybot.graphes_Availability(key, value)
 
-    print("----------------------------------------------")
-    #Oracle
-    for key, value in Oracle.items():
-        mybot.graphs_Oracle(key, value)
+        print("----------------------------------------------")
+        #Oracle
+        for key, value in Oracle.items():
+            mybot.graphs_Oracle(key, value)
 
-    print("----------------------------------------------")
-    #exchange processor
-    for key, value in exchange.items():
-        mybot.ser_exchange(key, value,"//label[@for='501024505']")
-    print("----------------------------------------------")
-    #exchange memory
-    for key, value in exchange.items():
-        mybot.ser_exchange(key, value,"//label[@for='501024502']")
+        print("----------------------------------------------")
+        #exchange processor
+        for key, value in exchange.items():
+            mybot.ser_exchange(key, value,"//label[@for='501024505']")
+        print("----------------------------------------------")
+        #exchange memory
+        for key, value in exchange.items():
+            mybot.ser_exchange(key, value,"//label[@for='501024502']")
+            
+        mybot.Quit()
 
-    mybot.Quit()
+    except Exception as e: 
+        print("Exception")
+        mybot.Quit()
 
 #------------------------------------------------------------------------------------------------------------------------------
     
     print("----------------------------------------------")
 def fun2():
-    mybot1=InstaBot("w_abdelrahman.ataa", "a1591997A!","Downloads\Graphes1")
-    #Thread_Pool
-    for key, value in Thread_Pool.items():
-        mybot1.graphs_Thread_Pool(key, value)
+    try:
+        mybot1=InstaBot(username, passwd,download_location02)
+        #Thread_Pool
+        for key, value in Thread_Pool.items():
+            mybot1.graphs_Thread_Pool(key, value)
 
-    print("----------------------------------------------")
-    #Heap_Memoryx
-    for key, value in Memory.items():
-        mybot1.Memory(key, value,"//label[@for='501978508']")
+        print("----------------------------------------------")
+        #Heap_Memoryx
+        for key, value in Memory.items():
+            mybot1.Memory(key, value,"//label[@for='501978508']")
 
 
-    print("----------------------------------------------")
-    #Memory_Used
-    for key, value in Memory.items():
-        mybot1.Memory(key, value,"//label[@for='501978509']")
+        print("----------------------------------------------")
+        #Memory_Used
+        for key, value in Memory.items():
+            mybot1.Memory(key, value,"//label[@for='501978509']")
 
-    #Front
-    for key, value in frontoffice.items():
-        mybot1.ser_front_Login(key, value)
+        #Front
+        for key, value in frontoffice.items():
+            mybot1.ser_front_Login(key, value)
 
-    
-    mybot1.Quit()
+        mybot1.Quit()
+    except Exception as e: 
+        print("Exception")
+        mybot1.Quit()
+
 
 
 with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
@@ -526,7 +545,9 @@ print("Both fun1 and fun2 have completed.")
 
 
 all_urls = {**Live_session, **Availability, **Memory, **Oracle, **Thread_Pool, **exchange, **frontoffice}
-txt_status = r'\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\status.txt'
+txt_status = os.getenv("txt_status")
+logs= os.getenv("logs")
+
 try:
     with open(txt_status, "r") as f:
         for line in f:
@@ -534,7 +555,7 @@ try:
             status[key] = value
 except Exception as e: 
     print(e)
-    with open(r'\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\logs.txt', "a") as f:
+    with open(logs, "a") as f:
         f.write(str(e) + "\n")   
 
 print(f"status: {status}")
@@ -577,5 +598,5 @@ try:
 
 except Exception as e: 
     print(e)
-    with open(r'\\10.199.199.35\soc team\Abdelrahman Ataa\Graphes\check_graphes\logs.txt', "a") as f:
+    with open(logs, "a") as f:
         f.write(str(e) + "\n")
