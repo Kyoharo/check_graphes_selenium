@@ -1,4 +1,5 @@
 #Live_session - Availability - Oracle
+from graphes_links import Live_session,Availability,Memory,exchange,frontoffice,Oracle,Thread_Pool,recverence,send_email
 from selenium  import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.chrome.service import Service
@@ -8,32 +9,29 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 import concurrent.futures
+import glob
+import csv
+from PIL import Image
+import platform
+import os
+from dotenv import load_dotenv
+from time import sleep
+
 # from selenium.webdriver import ActionChains
 # from selenium.webdriver.common.keys import Keys
 # from selenium.common.exceptions import NoSuchElementException
 # from selenium.common.exceptions import WebDriverException
 # from selenium.common.exceptions import StaleElementReferenceException
 # from selenium.common.exceptions import NoSuchElementException
-import os
-import glob
-import csv
-from graphes_links import Live_session,Availability,Memory,exchange,frontoffice,Oracle,Thread_Pool,recverence,send_email
-from PIL import Image
-# import re
-import platform
 
-import os
-from dotenv import load_dotenv
-from time import sleep
+
 env_path = "C:\\env\\Graphs\\.env"  
 load_dotenv(dotenv_path=env_path)
-
 issues = {}
 status = {}
 screen_folder_path = os.getenv("screen_folder_path")
-# screen_folder_path = r"screenshots"
 
-# screen_folder_path = r'screenshots'
+
 class InstaBot:
     def __init__(self, username, password,download_folder_name):
         self.download_folder_name = download_folder_name 
@@ -158,15 +156,6 @@ class InstaBot:
             self.driver.find_element(By.XPATH, "(//a[@aria-label=' [Click, tap or press ENTER to open]'])[1]").click()          # download button
             self.driver.find_element(By.XPATH, "//a[normalize-space()='CSV']").click()              # download csv 
             date = self.lastfile_name()
-            # input_string = self.driver.find_element(By.XPATH, "//span[@id='sid']").text             # get name of server
-            # pattern = r'AppSrv(\d+)'
-            # match = re.search(pattern, input_string)
-            # if match:
-            #     app_srv_value = match.group(1)
-            # else:
-            #     print("AppSrv value not found")
-            # Service_name = self.driver.find_element(By.XPATH, "//*[name()='g' and contains(@role,'switch')]").text 
-            # screen_name = app_srv_value +"_" + Service_name
             print(f"{key}: {date}")
             if int(date) >= 1800:
                 issues[key] = date
@@ -193,15 +182,6 @@ class InstaBot:
             self.driver.find_element(By.XPATH, "(//a[@aria-label=' [Click, tap or press ENTER to open]'])[1]").click()          # download button
             self.driver.find_element(By.XPATH, "//a[normalize-space()='CSV']").click()              # download csv 
             date = self.lastfile_name()
-            # input_string = self.driver.find_element(By.XPATH, "//span[@id='sid']").text             # get name of server
-            # pattern = r'AppSrv(\d+)'
-            # match = re.search(pattern, input_string)
-            # if match:
-            #     app_srv_value = match.group(1)
-            # else:
-            #     print("AppSrv value not found")
-            # Service_name = self.driver.find_element(By.XPATH, "//*[name()='g' and contains(@role,'switch')]").text 
-            # screen_name = app_srv_value +"_" + Service_name
             print(f"{key}: {date}")
             if int(date) == 1:
                 issues[key] = date
@@ -239,15 +219,6 @@ class InstaBot:
             self.driver.find_element(By.XPATH, "(//a[@aria-label=' [Click, tap or press ENTER to open]'])[1]").click()          # download button
             self.driver.find_element(By.XPATH, "//a[normalize-space()='CSV']").click()              # download csv 
             date = self.lastfile_name()
-            # input_string = self.driver.find_element(By.XPATH, "//span[@id='sid']").text             # get name of server
-            # pattern = r'AppSrv(\d+)'
-            # match = re.search(pattern, input_string)
-            # if match:
-            #     app_srv_value = match.group(1)
-            # else:
-            #     print("AppSrv value not found")
-            # Service_name = self.driver.find_element(By.XPATH, "//*[name()='g' and contains(@role,'switch')]").text 
-            # screen_name = app_srv_value +"_" + Service_name
             print(f"{key}: {date}")
             if int(date) > 80:
                 issues[key] = date
@@ -286,15 +257,6 @@ class InstaBot:
             self.driver.find_element(By.XPATH, "(//a[@aria-label=' [Click, tap or press ENTER to open]'])[1]").click()          # download button
             self.driver.find_element(By.XPATH, "//a[normalize-space()='CSV']").click()              # download csv 
             date = self.lastfile_name()
-            # input_string = self.driver.find_element(By.XPATH, "//span[@id='sid']").text             # get name of server
-            # pattern = r'AppSrv(\d+)'
-            # match = re.search(pattern, input_string)
-            # if match:
-            #     app_srv_value = match.group(1)
-            # else:
-            #     print("AppSrv value not found")
-            # Service_name = self.driver.find_element(By.XPATH, "//*[name()='g' and contains(@role,'switch')]").text 
-            # screen_name = app_srv_value +"_" + Service_name
             print(f"{key}: {date}")
             if int(date) > 132:
                 issues[key] = date
@@ -333,15 +295,6 @@ class InstaBot:
             self.driver.find_element(By.XPATH, "(//a[@aria-label=' [Click, tap or press ENTER to open]'])[1]").click()          # download button
             self.driver.find_element(By.XPATH, "//a[normalize-space()='CSV']").click()              # download csv 
             date = self.lastfile_name()
-            # input_string = self.driver.find_element(By.XPATH, "//span[@id='sid']").text             # get name of server
-            # pattern = r'AppSrv(\d+)'
-            # match = re.search(pattern, input_string)
-            # if match:
-            #     app_srv_value = match.group(1)
-            # else:
-            #     print("AppSrv value not found")
-            # Service_name = self.driver.find_element(By.XPATH, "//*[name()='g' and contains(@role,'switch')]").text 
-            # screen_name = app_srv_value +"_" + Service_name
             print(f"{key}: {date}")
             if float(date) > 90.00:
                 issues[key] = date
@@ -381,15 +334,6 @@ class InstaBot:
             self.driver.find_element(By.XPATH, "(//a[@aria-label=' [Click, tap or press ENTER to open]'])[1]").click()          # download button
             self.driver.find_element(By.XPATH, "//a[normalize-space()='CSV']").click()              # download csv 
             date = self.lastfile_name()
-            # input_string = self.driver.find_element(By.XPATH, "//span[@id='sid']").text             # get name of server
-            # pattern = r'AppSrv(\d+)'
-            # match = re.search(pattern, input_string)
-            # if match:
-            #     app_srv_value = match.group(1)
-            # else:
-            #     print("AppSrv value not found")
-            # Service_name = self.driver.find_element(By.XPATH, "//*[name()='g' and contains(@role,'switch')]").text 
-            # screen_name = app_srv_value +"_" + Service_name
             print(f"{key}: {date}")
             if float(date) > 80.00:
                 issues[key] = date
@@ -428,15 +372,6 @@ class InstaBot:
             self.driver.find_element(By.XPATH, "(//a[@aria-label=' [Click, tap or press ENTER to open]'])[1]").click()          # download button
             self.driver.find_element(By.XPATH, "//a[normalize-space()='CSV']").click()              # download csv 
             date = self.lastfile_name()
-            # input_string = self.driver.find_element(By.XPATH, "//span[@id='sid']").text             # get name of server
-            # pattern = r'AppSrv(\d+)'
-            # match = re.search(pattern, input_string)
-            # if match:
-            #     app_srv_value = match.group(1)
-            # else:
-            #     print("AppSrv value not found")
-            # Service_name = self.driver.find_element(By.XPATH, "//*[name()='g' and contains(@role,'switch')]").text 
-            # screen_name = app_srv_value +"_" + Service_name
             print(f"{key}: {date}")
             if int(date) > 1800 or  int(date) == 0: 
                 issues[key] = date
